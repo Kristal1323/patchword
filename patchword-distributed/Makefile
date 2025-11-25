@@ -5,7 +5,8 @@ SRC = src/main.c \
       src/lib/protocol.c \
       src/lib/util.c \
       src/coord/coordinator.c \
-      src/worker/worker.c
+      src/worker/worker.c \
+      src/worker/worker_logic.c
 
 OBJ = $(SRC:.c=.o)
 
