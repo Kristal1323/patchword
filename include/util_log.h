@@ -1,0 +1,9 @@
+ #ifndef UTIL_LOG_H
+ #define UTIL_LOG_H
+ 
+ void log_info(const char *fmt, ...);
+ void log_warn(const char *fmt, ...);
+ void log_error(const char *fmt, ...);
+ void log_worker(int pid, const char *fmt, ...);
+ 
+ #endif
