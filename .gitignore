@@ -1,0 +1,56 @@
+# ------------------------------
+# Build artifacts
+# ------------------------------
+*.o
+*.out
+*.exe
+*.obj
+*.so
+*.dll
+*.a
+*.dylib
+
+# The compiled program
+patchword
+
+# ------------------------------
+# Debug / profiling files
+# ------------------------------
+*.gcda
+*.gcno
+*.gcov
+gmon.out
+
+# ------------------------------
+# macOS system files
+# ------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# macOS folder metadata
+.Spotlight-V100
+.Trashes
+
+# ------------------------------
+# VS Code / JetBrains / Editor files
+# ------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ------------------------------
+# Logs
+# ------------------------------
+*.log
+
+# ------------------------------
+# Backup files
+# ------------------------------
+*~
+*.tmp
+*.bak
