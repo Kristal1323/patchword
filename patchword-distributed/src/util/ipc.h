@@ -9,5 +9,9 @@ typedef struct {
 } PipePair;
 
 int create_pipe_pair(PipePair *p);
+int spawn_worker_process(const char *path, char **argv,
+                         PipePair *to_worker,
+                         PipePair *from_worker,
+                         pid_t *child_pid);
 
 #endif
