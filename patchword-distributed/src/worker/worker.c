@@ -23,13 +23,13 @@ int worker_main(int argc, char **argv) {
     // Main loop: read messages from coordinator
     char buf[MAX_MSG];
     while (1) {
-         ssize_t n = safe_readline(STDIN_FILENO, buf, sizeof(buf));
+        ssize_t n = safe_readline(STDIN_FILENO, buf, sizeof(buf));
         if (n <= 0) {
             log_worker(getpid(), "EOF from coordinator, exiting");
             break;
         }
 
-         Message msg;
+        Message msg;
         if (parse_message(buf, &msg) < 0) {
             log_worker(getpid(), "Invalid message: %s", buf);
             continue;
@@ -55,6 +55,27 @@ int worker_main(int argc, char **argv) {
             break;
         }
 
+        case MSG_END:
+            log_worker(getpid(), "Received END, shutting down");
+            goto exit_now;
+
+        case MSG_ERROR:
+            log_worker(getpid(), "Received ERROR: %s", msg.payload);
+            break;
+
+        default:
+            log_worker(getpid(), "Unknown message type %d", msg.type);
         }
     }
+
+exit_now:
+    // Notify coordinator we're exiting
+    Message exitmsg;
+    exitmsg.type = MSG_EXITING;
+    char exitbuf[MAX_MSG];
+    format_message(exitbuf, sizeof(exitbuf), &exitmsg);
+    safe_writeline(STDOUT_FILENO, exitbuf);
+
+    log_worker(getpid(), "Worker exiting");
+    return 0;
 }
