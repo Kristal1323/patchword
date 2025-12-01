@@ -1,5 +1,6 @@
 #include "util_signals.h"
 #include <signal.h>
+#include <stddef.h>
 #include <stdatomic.h>
 
 static volatile sig_atomic_t child_flag = 0;
