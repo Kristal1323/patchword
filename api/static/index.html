@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patchword — Web UI</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0d1117;
+        --panel: #161b22;
+        --text: #e6edf3;
+        --muted: #8b949e;
+        --accent: #58a6ff;
+        --border: #30363d;
+        --success: #3fb950;
+        --error: #ff7b72;
+      }
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        padding: 20px 12px 32px;
+      }
+      @media (max-width: 640px) {
+        body {
+          padding: 16px 10px 24px;
+        }
+      }
+      .container {
+        width: min(1200px, 100%);
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 28px;
+        letter-spacing: 0.3px;
+      }
+      @media (max-width: 640px) {
+        h1 {
+          font-size: 24px;
+        }
+      }
+      p.desc {
+        margin: 0 0 16px;
+        color: var(--muted);
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 1fr;
+      }
+      @media (min-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+        margin-bottom: 12px;
+      }
+      @media (max-width: 640px) {
+        .card {
+          padding: 12px;
+          margin-bottom: 12px;
+        }
+      }
+      .card h2 {
+        margin: 0 0 8px;
+        font-size: 20px;
+      }
+      .card p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      @media (max-width: 640px) {
+        .card p {
+          font-size: 13px;
+        }
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin: 12px 0 6px;
+      }
+      .card * {
+        box-sizing: border-box;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #0b0f14;
+        color: var(--text);
+        font-size: 14px;
+      }
+      @media (max-width: 640px) {
+        input,
+        textarea,
+        select {
+          font-size: 15px;
+        }
+      }
+      textarea {
+        resize: vertical;
+        min-height: 90px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: minmax(240px, 1fr) 140px 140px;
+        gap: 12px;
+        align-items: end;
+      }
+      @media (max-width: 820px) {
+        .row {
+          grid-template-columns: 1fr 140px;
+        }
+      }
+      @media (max-width: 640px) {
+        .row {
+          grid-template-columns: 1fr;
+        }
+      }
+      button {
+        background: var(--accent);
+        color: #0b0f14;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 8px;
+        min-height: 44px;
+      }
+      button:hover {
+        filter: brightness(1.05);
+      }
+      .button-secondary {
+        background: #111720;
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .output {
+        background: #0b0f14;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        margin-top: 12px;
+        font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+        white-space: pre-wrap;
+        font-size: 13px;
+        max-height: 280px;
+        overflow-y: auto;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: #1f6feb;
+        color: white;
+        font-size: 12px;
+        margin-right: 6px;
+      }
+      .status {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .status.ok {
+        color: var(--success);
+      }
+      .status.err {
+        color: var(--error);
+      }
+      .list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 8px 0 0;
+      }
+      .pill {
+        padding: 6px 10px;
+        border-radius: 12px;
+        background: #111720;
+        border: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .guess-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+        min-height: 32px;
+      }
+      .guess-chip {
+        padding: 6px 10px;
+        border-radius: 10px;
+        background: #0b0f14;
+        border: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .guess-meta {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 140px;
+        gap: 12px;
+        align-items: end;
+      }
+      @media (max-width: 640px) {
+        .actions {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>PATCHWORD</h1>
+      <p class="desc">
+        Play the PatchWord game OR get use the distributed Subword Search.
+      </p>
+
+      <div class="card">
+        <h2>Play</h2>
+        <p>Provide a starter (optional) and add up to 5 guesses one at a time. Auto-generate a starter if you like.</p>
+        <div class="row">
+          <div>
+            <label for="starter">Starter (3-4 letters)</label>
+            <input id="starter" placeholder="e.g., CAT" />
+          </div>
+          <div>
+            <label for="length">Length (used if starter empty)</label>
+            <select id="length">
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+            </select>
+          </div>
+          <div>
+            <button id="genStarterBtn" type="button">Auto-generate</button>
+          </div>
+        </div>
+        <div class="row" style="grid-template-columns: minmax(240px, 1fr) 160px 120px;">
+          <div>
+            <label for="guessInput">Guess</label>
+            <input id="guessInput" placeholder="Enter a word" />
+          </div>
+          <div>
+            <button id="addGuessBtn" type="button">Add guess</button>
+          </div>
+          <div>
+            <button id="resetGuessBtn" type="button" class="button-secondary">Reset guesses</button>
+          </div>
+        </div>
+        <div class="guess-meta" id="guessMeta">0 of 5 guesses added</div>
+        <div class="guess-list" id="guessList"></div>
+        <button id="playBtn">Play</button>
+        <div id="playOut" class="output" hidden></div>
+      </div>
+
+      <div class="card" style="margin-top: 16px">
+        <h2>Subword Search</h2>
+        <p>Provide one or more substrings to find dictionary words that contain them.</p>
+        <label for="subs">Subwords (one per line)</label>
+        <textarea id="subs" placeholder="ing&#10;art" style="min-height: 100px;"></textarea>
+        <div class="actions">
+          <div>
+            <label for="limit">Result limit per subword</label>
+            <input id="limit" type="number" min="1" max="200" value="25" />
+          </div>
+          <div>
+            <button id="searchBtn">Search</button>
+          </div>
+        </div>
+        <div id="searchOut" class="output" hidden></div>
+      </div>
+
+      <div class="status" id="status">Ready</div>
+    </div>
+
+    <script>
+      const statusEl = document.getElementById("status");
+      const playOut = document.getElementById("playOut");
+      const searchOut = document.getElementById("searchOut");
+
+      function setStatus(msg, kind = "ok") {
+        statusEl.textContent = msg;
+        statusEl.className = `status ${kind}`;
+      }
+
+      let guesses = [];
+
+      function renderGuesses() {
+        const list = document.getElementById("guessList");
+        const meta = document.getElementById("guessMeta");
+        list.innerHTML = guesses
+          .map((g) => `<span class="guess-chip">${g}</span>`)
+          .join("");
+        meta.textContent = `${guesses.length} of 5 guesses added`;
+      }
+
+      async function doPlay() {
+        const starter = document.getElementById("starter").value.trim();
+        const length = parseInt(document.getElementById("length").value, 10);
+
+        if (!guesses.length) {
+          setStatus("Add at least one guess.", "err");
+          return;
+        }
+
+        const payload = { guesses: guesses.slice() };
+        if (starter) payload.starter = starter;
+        payload.length = length;
+
+        setStatus("Running play...", "ok");
+        playOut.hidden = true;
+        playOut.textContent = "";
+
+        try {
+          const res = await fetch("/play", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(errText || res.statusText);
+          }
+          const data = await res.json();
+          playOut.hidden = false;
+          playOut.innerHTML = `
+Starter: <span class="badge">${data.starter}</span>
+<br>Total length: ${data.total_length}
+<br>Valid guesses: ${data.valid_guesses.join(", ") || "none"}
+<br>Longest guesses: ${data.longest_guesses.join(", ") || "none"}
+<br>Best possible (top): ${data.best_possible.join(", ") || "none"}
+          `;
+          setStatus("Play complete.");
+        } catch (e) {
+          setStatus(`Play error: ${e.message}`, "err");
+          playOut.hidden = false;
+          playOut.textContent = e.message;
+        }
+      }
+
+      async function generateStarter() {
+        const length = parseInt(document.getElementById("length").value, 10) || 3;
+        setStatus("Generating starter...", "ok");
+        try {
+          const res = await fetch(`/starter?length=${length}`);
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(errText || res.statusText);
+          }
+          const data = await res.json();
+          document.getElementById("starter").value = data.starter || "";
+          setStatus("Starter generated.");
+        } catch (e) {
+          setStatus(`Starter error: ${e.message}`, "err");
+        }
+      }
+
+      function addGuess() {
+        const input = document.getElementById("guessInput");
+        const val = input.value.trim();
+        if (!val) {
+          setStatus("Enter a guess first.", "err");
+          return;
+        }
+        if (guesses.length >= 5) {
+          setStatus("Already have 5 guesses. Reset to start over.", "err");
+          return;
+        }
+        guesses.push(val);
+        input.value = "";
+        renderGuesses();
+        setStatus(`Added guess ${guesses.length}/5.`);
+        if (guesses.length === 5) {
+          doPlay();
+        }
+      }
+
+      function resetGuesses() {
+        guesses = [];
+        renderGuesses();
+        playOut.hidden = true;
+        playOut.textContent = "";
+        setStatus("Guesses reset.");
+      }
+
+      async function doSearch() {
+        const subs = document
+          .getElementById("subs")
+          .value.split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const limit = parseInt(document.getElementById("limit").value, 10) || 25;
+
+        if (!subs.length) {
+          setStatus("Enter at least one subword.", "err");
+          return;
+        }
+
+        setStatus("Searching...", "ok");
+        searchOut.hidden = true;
+        searchOut.textContent = "";
+
+        try {
+          const res = await fetch("/search", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ subwords: subs, limit }),
+          });
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(errText || res.statusText);
+          }
+          const data = await res.json();
+          let html = "";
+          data.forEach((row) => {
+            html += `<div><span class="badge">${row.subword}</span> ${row.count} matches<br>`;
+            html += `<div class="list">${row.words
+              .map((w) => `<span class="pill">${w}</span>`)
+              .join("")}</div></div><br>`;
+          });
+          searchOut.hidden = false;
+          searchOut.innerHTML = html || "No results.";
+          setStatus("Search complete.");
+        } catch (e) {
+          setStatus(`Search error: ${e.message}`, "err");
+          searchOut.hidden = false;
+          searchOut.textContent = e.message;
+        }
+      }
+
+      document.getElementById("playBtn").addEventListener("click", doPlay);
+      document.getElementById("searchBtn").addEventListener("click", doSearch);
+      document.getElementById("genStarterBtn").addEventListener("click", generateStarter);
+      document.getElementById("addGuessBtn").addEventListener("click", addGuess);
+      document.getElementById("resetGuessBtn").addEventListener("click", resetGuesses);
+      renderGuesses();
+
+      // Warm up health check
+      fetch("/health")
+        .then((r) => r.json())
+        .then((d) => setStatus(`Ready — dictionary size ${d.dictionary_size}`))
+        .catch(() => setStatus("Service ready (health check failed)", "err"));
+    </script>
+  </body>
+</html>
